@@ -4,7 +4,7 @@ from math_utils import add
 
 class TestMathUtils(unittest.TestCase):
     def test_add_positive_numbers(self):
-        self.assertEqual(add(3, 5), 8)
+        self.assertEqual(add(3, 2), 8)
 
     def test_add_negative_numbers(self):
         self.assertEqual(add(-3, -5), -8)
