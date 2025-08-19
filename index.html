@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Day & Night Mode</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      transition: background 1s ease, color 1s ease;
+      overflow: hidden;
+    }
+
+    .scene {
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to top, #87ceeb 0%, #ffffff 100%);
+      transition: background 1s ease;
+      position: relative;
+    }
+
+    .sun, .moon {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      background: yellow;
+      box-shadow: 0 0 40px yellow;
+      transition: all 1s ease;
+    }
+
+    .moon {
+      background: #fff;
+      box-shadow: 0 0 30px #ccc;
+      display: none;
+    }
+
+    h1 {
+      z-index: 2;
+      font-size: 3em;
+      color: #333;
+      transition: color 1s ease;
+    }
+
+    .toggle {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .toggle:hover {
+      background: #555;
+    }
+
+    body.night .scene {
+      background: linear-gradient(to top, #0d1b2a 0%, #1b263b 100%);
+    }
+
+    body.night .sun {
+      display: none;
+    }
+
+    body.night .moon {
+      display: block;
+    }
+
+    body.night h1 {
+      color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="sun"></div>
+    <div class="moon"></div>
+    <h1 id="greeting">Good Morning ☀️</h1>
+    <button class="toggle" onclick="toggleMode()">Toggle Day/Night</button>
+  </div>
+
+  <script>
+    function toggleMode() {
+      const body = document.body;
+      const greeting = document.getElementById('greeting');
+
+      body.classList.toggle('night');
+
+      if (body.classList.contains('night')) {
+        greeting.innerText = "Good Evening 🌙";
+      } else {
+        greeting.innerText = "Good Morning ☀️";
+      }
+    }
+  </script>
+</body>
+</html>
