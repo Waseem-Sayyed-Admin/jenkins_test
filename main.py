@@ -30,4 +30,4 @@ def get_system_info():
             "total": round(memory.total / (1024 * 1024), 2),  # MB
             "used": round(memory.used / (1024 * 1024), 2)      # MB
         }
-    }
+    } 
