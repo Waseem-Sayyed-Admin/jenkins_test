@@ -1,11 +1,12 @@
 from flask import Flask, jsonify, render_template
+from flask_cors import CORS  # ✅ Import CORS
 import psutil
 import socket
 import datetime
 import pytz
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # ✅ Apply CORS
 
 @app.route('/')
 def index():
@@ -18,7 +19,6 @@ def get_system_data():
 
     # Get CPU temperature (might not work on all systems)
     try:
-        # Check for sensors_temperatures key, it might not exist
         if hasattr(psutil, 'sensors_temperatures'):
             temps = psutil.sensors_temperatures()
             if 'coretemp' in temps:
