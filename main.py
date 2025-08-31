@@ -1,33 +1,54 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-import socket
+from flask import Flask, jsonify, render_template
 import psutil
+import socket
+import datetime
+import pytz
 
-app = FastAPI()
+app = Flask(__name__)
 
-# Allow frontend to access this API (CORS)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@app.get("/api/system")
-def get_system_info():
+@app.route('/data')
+def get_system_data():
+    # Get hostname
     hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
 
-    cpu_percent = psutil.cpu_percent(interval=0.5)
+    # Get CPU temperature (might not work on all systems)
+    try:
+        # Check for sensors_temperatures key, it might not exist
+        if hasattr(psutil, 'sensors_temperatures'):
+            temps = psutil.sensors_temperatures()
+            if 'coretemp' in temps:
+                cpu_temp = f"{temps['coretemp'][0].current}°C"
+            else:
+                cpu_temp = "N/A"
+        else:
+            cpu_temp = "N/A"
+    except (AttributeError, KeyError):
+        cpu_temp = "N/A"
+    
+    # Get CPU utilization
+    cpu_utilization = f"{psutil.cpu_percent(interval=1)}%"
+
+    # Get memory utilization
     memory = psutil.virtual_memory()
+    memory_utilization = f"{memory.percent}%"
 
-    return {
-        "hostname": hostname,
-        "ip": ip_address,
-        "cpu": cpu_percent,
-        "memory": {
-            "total": round(memory.total / (1024 * 1024), 2),  # MB
-            "used": round(memory.used / (1024 * 1024), 2)      # MB
-        }
-    } 
+    # Get current time with timezone
+    current_time_utc = datetime.datetime.now(pytz.utc)
+    current_time_local = current_time_utc.astimezone(datetime.datetime.now().astimezone().tzinfo)
+    current_time = current_time_local.strftime("%Y-%m-%d %I:%M:%S %p %Z")
+
+    data = {
+        'hostname': hostname,
+        'cpu_temp': cpu_temp,
+        'cpu_utilization': cpu_utilization,
+        'memory_utilization': memory_utilization,
+        'current_time': current_time
+    }
+    return jsonify(data)
+
+if __name__ == '__main__':
+    app.run(debug=True)
